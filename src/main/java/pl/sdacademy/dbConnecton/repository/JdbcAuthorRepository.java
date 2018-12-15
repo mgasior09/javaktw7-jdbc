@@ -15,15 +15,17 @@ public class JdbcAuthorRepository implements AuthorRepository {
     public Optional<Author> findByFirstAndLastName(String firstName, String lastName) {
         Author foundAuthor = null;
         try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            Statement statement = con.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT id AS mojeID, firstName, lastName FROM author WHERE firstName = '" + firstName + "' and lastName = '" + lastName + "'");
+            PreparedStatement preparedStatement = con.prepareStatement("SELECT id AS mojeID, firstName, lastName FROM Author WHERE firstName = ? AND lastName = ?");
+            preparedStatement.setString(1, firstName);
+            preparedStatement.setString(2, lastName);
+            ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 long authorID = rs.getLong("mojeID");
                 String authorName = rs.getString("firstName");
                 String authorLastName = rs.getString(3);
                 foundAuthor = new Author(authorID, authorName, authorLastName);
             }
-            statement.close();
+            preparedStatement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -34,8 +36,9 @@ public class JdbcAuthorRepository implements AuthorRepository {
     public Optional<Author> findById(Long id) {
         Author foundAuthor = null;
         try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            Statement statement = con.createStatement();
-            ResultSet rs = statement.executeQuery(String.format("SELECT id, firstName, lastName FROM author WHERE id =%d", id));
+            PreparedStatement statement = con.prepareStatement("SELECT id, firstName, lastName FROM Author WHERE id = ?");
+            statement.setLong(1, id);
+            ResultSet rs = statement.executeQuery();
             if (rs.next()) {
                 long authorID = rs.getLong("id");
                 String authorName = rs.getString("firstName");
@@ -52,8 +55,10 @@ public class JdbcAuthorRepository implements AuthorRepository {
     @Override
     public Author save(Author entity) {
         try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            Statement statement = con.createStatement();
-            statement.execute("INSERT INTO Author (firstName, lastName) " + "VALUES ('" + entity.getFirstName() + "','" + entity.getLastName() + "')");
+            PreparedStatement statement = con.prepareStatement("INSERT INTO Author (firstName, lastName) VALUES (?,?)");
+            statement.setString(1, entity.getFirstName());
+            statement.setString(2, entity.getLastName());
+            statement.execute();
             ResultSet rs = statement.executeQuery("SELECT MAX(id) AS maxID FROM Author");
             if (rs.next()) {
                 long authorID = rs.getLong("maxID");
@@ -68,6 +73,16 @@ public class JdbcAuthorRepository implements AuthorRepository {
 
     @Override
     public Author update(Author entity) {
-        return null;
+        try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+            PreparedStatement statement = con.prepareStatement("UPDATE Author set firstName = ?, lastName =? where id =?");
+            statement.setString(1, entity.getFirstName());
+            statement.setString(2, entity.getLastName());
+            statement.setLong(3, entity.getId());
+            statement.execute();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return entity;
     }
 }
