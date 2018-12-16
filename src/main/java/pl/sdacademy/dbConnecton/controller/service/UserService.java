@@ -1,10 +1,10 @@
 package pl.sdacademy.dbConnecton.controller.service;
 
-import pl.sdacademy.dbConnecton.model.User;
+import pl.sdacademy.dbConnecton.model.LibraryUser;
 
 import java.util.Optional;
 
 public interface UserService {
-    User addNewReader(User user);
+    LibraryUser addNewReader(LibraryUser libraryUser);
     Optional<String> removeReader(Long readerNumber);
 }

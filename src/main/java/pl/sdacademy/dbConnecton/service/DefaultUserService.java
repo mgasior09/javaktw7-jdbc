@@ -2,7 +2,7 @@ package pl.sdacademy.dbConnecton.service;
 
 import pl.sdacademy.dbConnecton.controller.service.UserService;
 import pl.sdacademy.dbConnecton.model.BookBorrow;
-import pl.sdacademy.dbConnecton.model.User;
+import pl.sdacademy.dbConnecton.model.LibraryUser;
 import pl.sdacademy.dbConnecton.service.repository.BookBorrowRepository;
 import pl.sdacademy.dbConnecton.service.repository.UserRepository;
 
@@ -19,8 +19,8 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public User addNewReader(User user) {
-        return userRepository.save(user);
+    public LibraryUser addNewReader(LibraryUser libraryUser) {
+        return userRepository.save(libraryUser);
     }
 
     @Override
@@ -29,13 +29,13 @@ public class DefaultUserService implements UserService {
         if (!borrowList.isEmpty()) {
             return Optional.of("Reader with borrowed books cannot be removed");
         }
-        Optional<User> foundUser = userRepository.findById(readerNumber);
+        Optional<LibraryUser> foundUser = userRepository.findById(readerNumber);
         if (!foundUser.isPresent()) {
-            return Optional.of("User does not exits");
+            return Optional.of("LibraryUser does not exits");
         }
-        User user = foundUser.get();
-        user.setRemoved(true);
-        userRepository.update(user);
+        LibraryUser libraryUser = foundUser.get();
+        libraryUser.setRemoved(true);
+        userRepository.update(libraryUser);
         return Optional.empty();
     }
 }

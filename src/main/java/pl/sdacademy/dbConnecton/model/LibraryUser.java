@@ -1,27 +1,34 @@
 package pl.sdacademy.dbConnecton.model;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "User")
+public class LibraryUser {
 
-public class User {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
     private String password;
     private String firstName;
     private String lastName;
     private String phoneNumber;
-    private String address;
-    private List<String> privileges;
+    @Column(name = "address")
+    private String homeAddress;
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "userId", referencedColumnName = "id")
+    private List<UserRole> privileges;
     private boolean removed;
 
-    public User() {
+    public LibraryUser() {
         privileges = new ArrayList<>();
         removed = false;
     }
 
-    public User(Long id, String username, String password, String firstName, String lastName, String phoneNumber, String address, List<String> privileges) {
+    public LibraryUser(Long id, String username, String password, String firstName, String lastName, String phoneNumber, String homeAddress, List<UserRole> privileges) {
         this();
         this.id = id;
         this.username = username;
@@ -29,7 +36,7 @@ public class User {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
-        this.address = address;
+        this.homeAddress = homeAddress;
         this.privileges = privileges;
     }
 
@@ -81,19 +88,19 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getAddress() {
-        return address;
+    public String getHomeAddress() {
+        return homeAddress;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setHomeAddress(String address) {
+        this.homeAddress = address;
     }
 
-    public List<String> getPrivileges() {
+    public List<UserRole> getPrivileges() {
         return privileges;
     }
 
-    public void setPrivileges(List<String> privileges) {
+    public void setPrivileges(List<UserRole> privileges) {
         this.privileges = privileges;
     }
 
@@ -106,6 +113,7 @@ public class User {
     }
 
     public boolean isAdmin() {
-        return privileges.contains("ADMIN");
+        return privileges.stream().map(UserRole::getRoleName).anyMatch(roleName -> roleName.equalsIgnoreCase("admin"));
+
     }
 }

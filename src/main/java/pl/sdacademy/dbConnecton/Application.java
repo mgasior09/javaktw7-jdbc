@@ -4,7 +4,10 @@ import pl.sdacademy.dbConnecton.controller.ConsoleDelegate;
 import pl.sdacademy.dbConnecton.controller.LibrarianController;
 import pl.sdacademy.dbConnecton.controller.LoginController;
 import pl.sdacademy.dbConnecton.controller.ReaderController;
-import pl.sdacademy.dbConnecton.model.User;
+import pl.sdacademy.dbConnecton.model.LibraryUser;
+import pl.sdacademy.dbConnecton.repository.JpaLibraryUserRepository;
+import pl.sdacademy.dbConnecton.repository.JpaLocationRepository;
+import pl.sdacademy.dbConnecton.repository.JpaWriterRepository;
 import pl.sdacademy.dbConnecton.service.DefaultBookService;
 import pl.sdacademy.dbConnecton.service.DefaultLoginService;
 import pl.sdacademy.dbConnecton.service.DefaultUserService;
@@ -20,11 +23,11 @@ public class Application {
     public Application() {
         console = new ConsoleDelegate();
 
-        AuthorRepository authorRepository = null;
+        AuthorRepository authorRepository = new JpaWriterRepository();
         BookBorrowRepository bookBorrowRepository = null;
         BookRepository bookRepository = null;
-        LocationRepository locationRepository = null;
-        UserRepository userRepository = null;
+        LocationRepository locationRepository = new JpaLocationRepository();
+        UserRepository userRepository = new JpaLibraryUserRepository();
 
         DefaultBookService defaultBookService = new DefaultBookService(locationRepository, authorRepository, bookBorrowRepository, bookRepository);
         DefaultLoginService defaultLoginService = new DefaultLoginService(userRepository);
@@ -66,28 +69,28 @@ public class Application {
         console.printMessage("9. Exit");
     }
 
-    private void handleLoggedUserMenu(User user) {
+    private void handleLoggedUserMenu(LibraryUser libraryUser) {
         while (true) {
-            console.printMessage("# Hello " + user.getFirstName());
-            printLoggedUserMenu(user);
+            console.printMessage("# Hello " + libraryUser.getFirstName());
+            printLoggedUserMenu(libraryUser);
             try {
                 Integer userSelection = getUserSelection();
                 switch (userSelection) {
                     case 1:
-                        readerController.listBooks(user);
+                        readerController.listBooks(libraryUser);
                         break;
                     case 2:
-                        readerController.borrowNewBook(user);
+                        readerController.borrowNewBook(libraryUser);
                         break;
                     case 3:
-                        readerController.returnBook(user);
+                        readerController.returnBook(libraryUser);
                         break;
                     case 9:
                         console.printMessage("Logged out");
                         return;
                     case 0:
-                        if (user.isAdmin()) {
-                            handleAdministrativeMenu(user);
+                        if (libraryUser.isAdmin()) {
+                            handleAdministrativeMenu(libraryUser);
                         }
                         break;
                     default:
@@ -99,17 +102,17 @@ public class Application {
         }
     }
 
-    private void printLoggedUserMenu(User user) {
+    private void printLoggedUserMenu(LibraryUser libraryUser) {
         console.printMessage("1. List borrowed books");
         console.printMessage("2. Borrow a book");
         console.printMessage("3. Return a book");
         console.printMessage("9. Log out");
-        if (user.isAdmin()) {
+        if (libraryUser.isAdmin()) {
             console.printMessage("0. Manage library");
         }
     }
 
-    private void handleAdministrativeMenu(User user) {
+    private void handleAdministrativeMenu(LibraryUser libraryUser) {
         while(true){
             printLibrarianMenu();
             Integer choose = getUserSelection();

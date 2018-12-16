@@ -27,17 +27,17 @@ public class DefaultBookService implements BookService {
     }
 
     @Override
-    public List<Book> getBorrowedBooks(User user) {
-        return bookRepository.findByBorrowingUserId(user.getId());
+    public List<Book> getBorrowedBooks(LibraryUser libraryUser) {
+        return bookRepository.findByBorrowingUserId(libraryUser.getId());
     }
 
     @Override
-    public Optional<Book> borrowBook(User user, String title, String author) {
+    public Optional<Book> borrowBook(LibraryUser libraryUser, String title, String author) {
         Optional<Book> foundBook = bookRepository.findByTitleAndAuthorLastName(title, author).stream().findAny();
         Boolean bookBorrowed = foundBook.map(Book::getId).map(bookBorrowRepository::isBookBorrowed).orElse(false);
         if (!bookBorrowed) {
             BookBorrow newBookBorrow = new BookBorrow();
-            newBookBorrow.setUserId(user.getId());
+            newBookBorrow.setUserId(libraryUser.getId());
             newBookBorrow.setBookId(foundBook.get().getId());
             newBookBorrow.setBorrowDate(LocalDateTime.now());
             bookBorrowRepository.save(newBookBorrow);
@@ -47,8 +47,8 @@ public class DefaultBookService implements BookService {
     }
 
     @Override
-    public boolean returnBook(User user, Long bookId) {
-        Optional<BookBorrow> borrowedBookRecord = bookBorrowRepository.findByUserIdAndBookId(user.getId(), bookId);
+    public boolean returnBook(LibraryUser libraryUser, Long bookId) {
+        Optional<BookBorrow> borrowedBookRecord = bookBorrowRepository.findByUserIdAndBookId(libraryUser.getId(), bookId);
         if (borrowedBookRecord.isPresent()) {
             BookBorrow bookBorrow = borrowedBookRecord.get();
             bookBorrow.setReturnDate(LocalDateTime.now());
@@ -59,30 +59,30 @@ public class DefaultBookService implements BookService {
     }
 
     @Override
-    public Optional<String> addNewBook(Book book, List<Author> authors, Location location) {
+    public Optional<String> addNewBook(Book book, List<Writer> writers, Location location) {
         Optional<Location> foundLocation = locationRepository.find(location.getRackSymbol(), location.getShelfSymbol(), location.getPosition());
         if (foundLocation.isPresent()) {
             return Optional.of("Location already occupied");
         }
-        Long locationId = locationRepository.save(location).getId();
-        List<Long> authorIds = getAuthorIds(authors);
-        book.setAuthors(authorIds);
-        book.setLocation(locationId);
+       location = locationRepository.save(location);
+        List<Writer> foundWriters = getAuthors(writers);
+        book.setAuthors(foundWriters);
+        book.setLocation(location);
         bookRepository.save(book);
         return Optional.empty();
     }
 
-    private List<Long> getAuthorIds(List<Author> authors) {
-        List<Long> authorIds = new ArrayList<>();
-        for (Author author : authors) {
-            Optional<Author> foundAuthor = authorRepository.findByFirstAndLastName(author.getFirstName(), author.getLastName());
+    private List<Writer> getAuthors(List<Writer> writers) {
+        List<Writer> authors = new ArrayList<>();
+        for (Writer writer : writers) {
+            Optional<Writer> foundAuthor = authorRepository.findByFirstAndLastName(writer.getFirstName(), writer.getLastName());
             if (foundAuthor.isPresent()) {
-                authorIds.add(foundAuthor.get().getId());
+                authors.add(foundAuthor.get());
             } else {
-                authorIds.add(authorRepository.save(author).getId());
+                authors.add(authorRepository.save(writer));
             }
         }
-        return authorIds;
+        return authors;
     }
 
     @Override

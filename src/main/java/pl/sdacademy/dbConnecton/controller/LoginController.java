@@ -1,7 +1,7 @@
 package pl.sdacademy.dbConnecton.controller;
 
 import pl.sdacademy.dbConnecton.controller.service.LoginService;
-import pl.sdacademy.dbConnecton.model.User;
+import pl.sdacademy.dbConnecton.model.LibraryUser;
 
 import java.util.Optional;
 
@@ -15,10 +15,10 @@ public class LoginController {
         this.loginService = loginService;
     }
 
-    public Optional<User> login() {
+    public Optional<LibraryUser> login() {
         String username = console.askUserForText("Username");
         String password = console.askUserForText("Password");
-        Optional<User> loggedUser = loginService.login(username, password);
+        Optional<LibraryUser> loggedUser = loginService.login(username, password);
         if (!loggedUser.isPresent()) {
             console.printMessage("Invalid user or password");
         }

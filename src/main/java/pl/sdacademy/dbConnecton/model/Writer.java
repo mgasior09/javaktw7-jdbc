@@ -1,14 +1,21 @@
 package pl.sdacademy.dbConnecton.model;
 
-public class Author {
+import javax.persistence.*;
+
+
+@Entity
+@Table(name = "Author")
+public class Writer {
+    @Id
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
     private String firstName;
     private String lastName;
 
-    public Author() {
+    public Writer() {
     }
 
-    public Author(Long id, String firstName, String lastName) {
+    public Writer(Long id, String firstName, String lastName) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
