@@ -1,6 +1,5 @@
 package pl.sdacademy.dbConnecton.repository;
 
-import pl.sdacademy.dbConnecton.model.Book;
 import pl.sdacademy.dbConnecton.model.BookBorrow;
 import pl.sdacademy.dbConnecton.service.repository.BookBorrowRepository;
 
