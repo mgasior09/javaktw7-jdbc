@@ -37,8 +37,8 @@ public class DefaultBookService implements BookService {
         Boolean bookBorrowed = foundBook.map(Book::getId).map(bookBorrowRepository::isBookBorrowed).orElse(false);
         if (!bookBorrowed) {
             BookBorrow newBookBorrow = new BookBorrow();
-            newBookBorrow.setUserId(libraryUser.getId());
-            newBookBorrow.setBookId(foundBook.get().getId());
+            newBookBorrow.setUser(libraryUser.getId());
+            newBookBorrow.setBook(foundBook.get().getId());
             newBookBorrow.setBorrowDate(LocalDateTime.now());
             bookBorrowRepository.save(newBookBorrow);
             return foundBook;

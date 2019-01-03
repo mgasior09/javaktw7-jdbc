@@ -1,21 +1,29 @@
 package pl.sdacademy.dbConnecton.model;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Entity
 public class BookBorrow {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long userId;
-    private Long bookId;
+    @ManyToOne
+    @JoinColumn (name = "userId", referencedColumnName = "id")
+    private LibraryUser user;
+    @ManyToOne
+    @JoinColumn (name = "bookId", referencedColumnName = "id")
+    private Book book;
     private LocalDateTime borrowDate;
     private LocalDateTime returnDate;
 
     public BookBorrow() {
     }
 
-    public BookBorrow(Long id, Long userId, Long bookId, LocalDateTime borrowDate, LocalDateTime returnDate) {
+    public BookBorrow(Long id, LibraryUser user, Book book, LocalDateTime borrowDate, LocalDateTime returnDate) {
         this.id = id;
-        this.userId = userId;
-        this.bookId = bookId;
+        this.user = user;
+        this.book = book;
         this.borrowDate = borrowDate;
         this.returnDate = returnDate;
     }
@@ -28,20 +36,20 @@ public class BookBorrow {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
+    public LibraryUser getUser() {
+        return user;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser(LibraryUser user) {
+        this.user = user;
     }
 
-    public Long getBookId() {
-        return bookId;
+    public Book getBook() {
+        return book;
     }
 
-    public void setBookId(Long bookId) {
-        this.bookId = bookId;
+    public void setBook(Book book) {
+        this.book = book;
     }
 
     public LocalDateTime getBorrowDate() {
