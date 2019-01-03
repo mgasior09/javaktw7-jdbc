@@ -9,16 +9,15 @@ public class Writer {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
-    private String firstName;
-    private String lastName;
+    @Embedded
+    private PersonalData personalData;
 
     public Writer() {
     }
 
-    public Writer(Long id, String firstName, String lastName) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
+
+    public Writer(PersonalData personalData) {
+        this.personalData = personalData;
     }
 
     public Long getId() {
@@ -29,19 +28,11 @@ public class Writer {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public PersonalData getPersonalData() {
+        return personalData;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setPersonalData(PersonalData personalData) {
+        this.personalData = personalData;
     }
 }

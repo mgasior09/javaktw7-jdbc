@@ -71,7 +71,7 @@ public class Application {
 
     private void handleLoggedUserMenu(LibraryUser libraryUser) {
         while (true) {
-            console.printMessage("# Hello " + libraryUser.getFirstName());
+            console.printMessage("# Hello " + libraryUser.getPersonalData().getFirstName());
             printLoggedUserMenu(libraryUser);
             try {
                 Integer userSelection = getUserSelection();

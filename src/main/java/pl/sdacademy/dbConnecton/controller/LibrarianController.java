@@ -38,8 +38,7 @@ public class LibrarianController {
         LibraryUser libraryUser = new LibraryUser();
         libraryUser.setUsername(console.askUserForText("Username"));
         libraryUser.setPassword(console.askUserForText("Password"));
-        libraryUser.setFirstName(console.askUserForText("First name"));
-        libraryUser.setLastName(console.askUserForText("Last name"));
+        libraryUser.setPersonalData (console.askUserForText("First name"), console.askUserForText("Last name"));
         libraryUser.setHomeAddress(console.askUserForText("Address"));
         libraryUser.setPhoneNumber(console.askUserForText("Phone number"));
         libraryUser.getPrivileges().add(new UserRole(null,"READER"));

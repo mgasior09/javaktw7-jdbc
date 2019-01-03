@@ -37,8 +37,8 @@ public class DefaultBookService implements BookService {
         Boolean bookBorrowed = foundBook.map(Book::getId).map(bookBorrowRepository::isBookBorrowed).orElse(false);
         if (!bookBorrowed) {
             BookBorrow newBookBorrow = new BookBorrow();
-            newBookBorrow.setUser(libraryUser.getId());
-            newBookBorrow.setBook(foundBook.get().getId());
+            newBookBorrow.setUser(libraryUser);
+            newBookBorrow.setBook(foundBook.get());
             newBookBorrow.setBorrowDate(LocalDateTime.now());
             bookBorrowRepository.save(newBookBorrow);
             return foundBook;
@@ -64,7 +64,7 @@ public class DefaultBookService implements BookService {
         if (foundLocation.isPresent()) {
             return Optional.of("Location already occupied");
         }
-       location = locationRepository.save(location);
+        location = locationRepository.save(location);
         List<Writer> foundWriters = getAuthors(writers);
         book.setAuthors(foundWriters);
         book.setLocation(location);
@@ -75,7 +75,7 @@ public class DefaultBookService implements BookService {
     private List<Writer> getAuthors(List<Writer> writers) {
         List<Writer> authors = new ArrayList<>();
         for (Writer writer : writers) {
-            Optional<Writer> foundAuthor = authorRepository.findByFirstAndLastName(writer.getFirstName(), writer.getLastName());
+            Optional<Writer> foundAuthor = authorRepository.findByFirstAndLastName(writer.getPersonalData().getFirstName(), writer.getPersonalData().getLastName());
             if (foundAuthor.isPresent()) {
                 authors.add(foundAuthor.get());
             } else {

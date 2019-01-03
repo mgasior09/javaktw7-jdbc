@@ -13,8 +13,8 @@ public class LibraryUser {
     private Long id;
     private String username;
     private String password;
-    private String firstName;
-    private String lastName;
+    @Embedded
+    private PersonalData personalData;
     private String phoneNumber;
     @Column(name = "address")
     private String homeAddress;
@@ -28,13 +28,12 @@ public class LibraryUser {
         removed = false;
     }
 
-    public LibraryUser(Long id, String username, String password, String firstName, String lastName, String phoneNumber, String homeAddress, List<UserRole> privileges) {
+    public LibraryUser(Long id, String username, String password, PersonalData personalData, String phoneNumber, String homeAddress, List<UserRole> privileges) {
         this();
         this.id = id;
         this.username = username;
         this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.personalData = personalData;
         this.phoneNumber = phoneNumber;
         this.homeAddress = homeAddress;
         this.privileges = privileges;
@@ -64,21 +63,6 @@ public class LibraryUser {
         this.password = password;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
 
     public String getPhoneNumber() {
         return phoneNumber;
@@ -115,5 +99,16 @@ public class LibraryUser {
     public boolean isAdmin() {
         return privileges.stream().map(UserRole::getRoleName).anyMatch(roleName -> roleName.equalsIgnoreCase("admin"));
 
+    }
+
+    public PersonalData getPersonalData() {
+        return personalData;
+    }
+
+    public void setPersonalData( String firstName, String lastName) {
+        PersonalData personalData = new PersonalData();
+        personalData.setFirstName(firstName);
+        personalData.setLastName(lastName);
+        this.personalData = personalData;
     }
 }

@@ -12,7 +12,7 @@ public class JpaWriterRepository implements AuthorRepository {
     public Optional<Writer> findByFirstAndLastName(String firstName, String lastName) {
         EntityManager entityManager = HibernateEntityManagerFactory.get().createEntityManager();
         entityManager.getTransaction().begin();
-        TypedQuery<Writer> query = entityManager.createQuery("FROM Writer w WHERE w.firstName = :firstName AND w.lastName = :lastName", Writer.class);
+        TypedQuery<Writer> query = entityManager.createQuery("FROM Writer w WHERE w.personalData. firstName = :firstName AND w.personalData. lastName = :lastName", Writer.class);
         query.setParameter("firstName", firstName);
         query.setParameter("lastName", lastName);
         query.setMaxResults(1);
@@ -49,10 +49,10 @@ public class JpaWriterRepository implements AuthorRepository {
         EntityManager entityManager = HibernateEntityManagerFactory.get().createEntityManager();
         entityManager.getTransaction().begin();
 
-      Writer foundWriter = entityManager.find(Writer.class, entity.getId());
+        Writer foundWriter = entityManager.find(Writer.class, entity.getId());
         if (foundWriter != null) {
-            foundWriter.setFirstName(entity.getFirstName());
-            foundWriter.setLastName(entity.getLastName());
+            foundWriter.setPersonalData(entity.getPersonalData());
+
             entityManager.merge(foundWriter);
         } else {
             entityManager.persist(entity);
